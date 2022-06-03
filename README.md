@@ -1,24 +1,12 @@
-Define registers without using <avr/io.h>
-=========================================
 
-atmega328.h shows the nitty-gritty details
-of how hardware registers are defined
-for the ATmega328 microcontroller.
+Test to get an example project using arduino and FreeRtos to compile and flash without the arduino ide
 
-This might be as good as it gets
-if I do not have a standard header file
-that defines the registers for a chip.
 
-(compared with 06-using-avr-gcc-without-own-headers-without-avr-headers)
+This project is primarily based on Jim Prior's arduino-cli on his gitlabs: https://gitlab.com/james-prior/arduino-cli
+### Caveats
+- The project is currently reliant on using an Arduino Uno R3
+- The project is not yet clean (as of initial commit) and has plenty of ugly commented out/superfluous code
+- Majority of the commands in the build_uno file is taken directly from Arduino's compilation commands you can see when it is running in verbose mode
+### To Run
 
-Good:
--   Improved modularity and file structure.
--   Code is easier to understand because more meaningful names are used.
--   Shows the nitty-gritty details of how hardware registers are defined.
--   Done on command line.
--   Does not rely on Arduino development environment.
-
-Bad:
--   Is less portable and maintainable by not using <avr/io.h>.
--   wait() is uncalibrated.
--   Does not use TDD.
+use ./build_uno
