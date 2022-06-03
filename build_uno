@@ -1,0 +1,117 @@
+#!/bin/sh
+
+port=`./discover-arduino-uno-r3-port`
+echo "The Arduino UNO r3 is on port '$port'."
+
+base_name=blink
+arduino_cache='./deps/arduino_cache'
+compiler=avr-gcc
+compiler_options='-Wall -Os -mmcu=atmega328p -DF_CPU=16000000UL'
+
+arduino_hardware_cores='/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino'
+arduino_hardware_standard='/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/standard'
+freertos_library_location='./deps/freertos'
+
+#freertos_library_location='/Users/chris.a.graham/Documents/Arduino/libraries/FreeRTOS/src'
+# make .o file from .c file
+#"$compiler" -c $compiler_options "$base_name".c -o "$base_name".o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -flto -w -x c++ -E -CC -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$base_name".cpp -o /dev/null
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I "$freertos_library_location" "$base_name".cpp -o "$base_name".o
+
+
+#Compiling arduino core
+avr-gcc -c -g -x assembler-with-cpp -flto -MMD -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I "$arduino_hardware_cores" -I "$arduino_hardware_standard" "$arduino_hardware_cores"/wiring_pulse.S -o "$arduino_cache"/wiring_pulse.S.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I "$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/wiring_digital.c -o "$arduino_cache"/wiring_digital.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I "$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/WInterrupts.c -o "$arduino_cache"/WInterrupts.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I "$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/wiring_analog.c -o "$arduino_cache"/wiring_analog.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/hooks.c -o "$arduino_cache"/hooks.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/wiring_pulse.c -o "$arduino_cache"/wiring_pulse.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/wiring.c -o "$arduino_cache"/wiring.c.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/wiring_shift.c -o "$arduino_cache"/wiring_shift.c.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/HardwareSerial.cpp -o "$arduino_cache"/HardwareSerial.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/PluggableUSB.cpp -o "$arduino_cache"/PluggableUSB.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/HardwareSerial1.cpp -o "$arduino_cache"/HardwareSerial1.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/USBCore.cpp -o "$arduino_cache"/USBCore.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/HardwareSerial2.cpp -o "$arduino_cache"/HardwareSerial2.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/HardwareSerial0.cpp -o "$arduino_cache"/HardwareSerial0.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/HardwareSerial3.cpp -o "$arduino_cache"/HardwareSerial3.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/Stream.cpp -o "$arduino_cache"/Stream.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/Print.cpp -o "$arduino_cache"/Print.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/IPAddress.cpp -o "$arduino_cache"/IPAddress.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/CDC.cpp -o "$arduino_cache"/CDC.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/WMath.cpp -o "$arduino_cache"/WMath.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/WString.cpp -o "$arduino_cache"/WString.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/abi.cpp -o "$arduino_cache"/abi.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/new.cpp -o "$arduino_cache"/new.cpp.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" "$arduino_hardware_cores"/Tone.cpp -o "$arduino_cache"/Tone.cpp.o
+
+
+# (FreeRtos) Taken directly from arduino ide's verbose build process
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/event_groups.c -o event_groups.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/heap_3.c -o heap_3.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/list.c -o list.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/queue.c -o queue.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/tasks.c -o tasks.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/timers.c -o timers.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/port.c -o port.o
+avr-gcc -c -g -Os -w -std=gnu11 -ffunction-sections -fdata-sections -MMD -flto -fno-fat-lto-objects -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/stream_buffer.c -o stream_buffer.o
+avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR -I"$arduino_hardware_cores" -I"$arduino_hardware_standard" -I"$freertos_library_location" "$freertos_library_location"/variantHooks.cpp -o variantHooks.o
+
+
+# building an archive(?) commands themselves didn't work at base
+rm core.a
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring_pulse.S.o
+avr-gcc-ar rcs core.a "$arduino_cache"/WInterrupts.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/hooks.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring_analog.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring_digital.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring_pulse.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/wiring_shift.c.o
+avr-gcc-ar rcs core.a "$arduino_cache"/CDC.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/HardwareSerial.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/HardwareSerial0.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/HardwareSerial1.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/HardwareSerial2.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/HardwareSerial3.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/IPAddress.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/PluggableUSB.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/Print.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/Stream.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/Tone.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/USBCore.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/WMath.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/WString.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/abi.cpp.o
+avr-gcc-ar rcs core.a "$arduino_cache"/new.cpp.o
+
+#revised building an archive to a single command
+#ar -rcs core.a "$arduino_cache"/wiring_pulse.S.o "$arduino_cache"/WInterrupts.c.o "$arduino_cache"/hooks.c.o \
+#"$arduino_cache"/wiring.c.o "$arduino_cache"/wiring_analog.c.o "$arduino_cache"/wiring_digital.c.o \
+#"$arduino_cache"/wiring_pulse.c.o "$arduino_cache"/wiring_shift.c.o "$arduino_cache"/CDC.cpp.o "$arduino_cache"/HardwareSerial.cpp.o \
+#"$arduino_cache"/HardwareSerial1.cpp.o "$arduino_cache"/HardwareSerial2.cpp.o "$arduino_cache"/HardwareSerial3.cpp.o "$arduino_cache"/IPAddress.cpp.o \
+#"$arduino_cache"/PluggableUSB.cpp.o "$arduino_cache"/Print.cpp.o "$arduino_cache"/Stream.cpp.o "$arduino_cache"/Tone.cpp.o \
+#"$arduino_cache"/USBCore.cpp.o "$arduino_cache"/WMath.cpp.o "$arduino_cache"/WString.cpp.o "$arduino_cache"/abi.cpp.o "$arduino_cache"/new.cpp.o
+
+#Archiving built core (caching):
+
+# make .elf file from .o file
+#"$compiler" $compiler_options "$base_name".o -o "$base_name".elf
+avr-gcc -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega328p -o "$base_name".elf \
+blink.o \
+event_groups.o heap_3.o list.o port.o queue.o stream_buffer.o tasks.o timers.o variantHooks.o \
+core.a \
+-L deps/arduino_cache -lm
+#"$arduino_cache"/new.cpp.o  "$arduino_cache"/abi.cpp.o "$arduino_cache"/WString.cpp.o  "$arduino_cache"/WMath.cpp.o "$arduino_cache"/USBCore.cpp.o "$arduino_cache"/Tone.cpp.o  "$arduino_cache"/Stream.cpp.o "$arduino_cache"/Print.cpp.o "$arduino_cache"/PluggableUSB.cpp.o "$arduino_cache"/IPAddress.cpp.o "$arduino_cache"/HardwareSerial3.cpp.o "$arduino_cache"/HardwareSerial2.cpp.o "$arduino_cache"/HardwareSerial1.cpp.o "$arduino_cache"/HardwareSerial0.cpp.o "$arduino_cache"/HardwareSerial.cpp.o "$arduino_cache"/CDC.cpp.o "$arduino_cache"/wiring_shift.c.o "$arduino_cache"/wiring_pulse.c.o "$arduino_cache"/wiring_digital.c.o "$arduino_cache"/wiring_analog.c.o "$arduino_cache"/wiring.c.o "$arduino_cache"/hooks.c.o "$arduino_cache"/WInterrupts.c.o "$arduino_cache"/wiring_pulse.S.o \
+#new.cpp.o  abi.cpp.o WString.cpp.o  WMath.cpp.o USBCore.cpp.o Tone.cpp.o  Stream.cpp.o Print.cpp.o PluggableUSB.cpp.o IPAddress.cpp.o HardwareSerial3.cpp.o HardwareSerial2.cpp.o HardwareSerial1.cpp.o HardwareSerial0.cpp.o HardwareSerial.cpp.o CDC.cpp.o wiring_shift.c.o wiring_pulse.c.o wiring_digital.c.o wiring_analog.c.o wiring.c.o hooks.c.o WInterrupts.c.o wiring_pulse.S.o \
+
+# make .hex (intel hex format) file from .elf file
+#avr-objcopy -j .text -j .data -O ihex "$base_name".elf "$base_name".hex
+
+avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 "$base_name".elf "$base_name".eep
+avr-objcopy -O ihex -R .eeprom "$base_name".elf "$base_name".hex
+avr-size -A "$base_name".elf
+
+# burn (write) the program into the Arduino from .hex file
+avrdude -C/Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrdude.conf -v -patmega328p \
+  -carduino -P "$port" -b115200 -D -Uflash:w:"$base_name".hex:i

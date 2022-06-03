@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Figure out name of port that genuine Arduino UNO r3 board is connected to and
+# output that device name.
+# If no port is found,
+# this program outputs nothing and returns a non-zero exit code.
+
+# This script should work for host computers running Linux and macos
+# connected to genuine Arduino UNO r3 boards and faithful clones.
+# This script just works for genuine Arduino UNO r3 boards
+# and clones that can not be distinguished from genuine Arduino UNO r3 boards.
+# The clones that Microcenter sells work with this script.
+# This script also works with the unfaithful clones
+# that use the crummy CH340 chip for the USB interface.
+
+# This script has not been tested on Microsoft Windows and
+# probably does not work on computers running Microsoft Windows.
+
+for port in /dev/ttyACM* /dev/cu.usbmodem* /dev/ttyUSB* /dev/cu.usbserial-*; do
+    if [ -c "$port" ]; then
+        echo "$port"
+        exit 0
+    fi
+done
+
+exit 1

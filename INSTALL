@@ -1,0 +1,25 @@
+#!/bin/sh
+
+if which brew; then
+    # for macos
+    brew tap osx-cross/avr
+    brew install \
+        avr-gcc \
+        avrdude \
+        minicom \
+        cpputest \
+        pkg-config \
+        gcc
+elif which apt-get; then
+    # for Raspbian Buster with desktop 2020-02-05 on Pi 4B
+    sudo apt -y install \
+        avrdude \
+        avrdude-doc \
+        gcc-avr \
+        cpputest \
+        gcc \
+        avr-libc
+else
+    echo Sorry, I do not how to install on this system. >&2
+    exit 1
+fi

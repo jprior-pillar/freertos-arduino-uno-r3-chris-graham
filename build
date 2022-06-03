@@ -1,0 +1,43 @@
+#!/bin/sh
+
+port=`./discover-arduino-uno-r3-port`
+echo "The Arduino Mega 2560 is on port '$port'."
+
+base_name=blink
+
+compiler=avr-gcc
+compiler_options='-Wall -Os -mmcu=atmega2560 -DF_CPU=16000000UL'
+
+# this step generates assembler output and is unnecessary
+"$compiler" -c $compiler_options "$base_name".c -S -o "$base_name".s
+
+
+# Generating function prototypes...
+
+
+# make .o file from .c file
+"$compiler" -c $compiler_options "$base_name".c -o "$base_name".o
+
+"$compiler" -c $compiler_options ./deps/src/event_groups.c -o event_groups.o
+"$compiler" -c $compiler_options ./deps/src/heap_3.c -o heap_3.o
+"$compiler" -c $compiler_options ./deps/src/list.c -o list.o
+"$compiler" -c $compiler_options ./deps/src/port.c -o port.o
+"$compiler" -c $compiler_options ./deps/src/queue.c -o queue.o
+"$compiler" -c $compiler_options ./deps/src/stream_buffer.c -o stream_buffer.o
+"$compiler" -c $compiler_options ./deps/src/timers.c -o timers.o
+"$compiler" -c $compiler_options ./deps/src/tasks.c -o tasks.o
+
+#avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -flto -w -x c++ -E -CC -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR -I/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino -I /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/mega -I /Users/chris.a.graham/Documents/Arduino/libraries/FreeRTOS/freertos  -o /dev/null
+avr-g++ -c ./deps/src/variantHooks.cpp -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -flto -w -x c++ -E -CC -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR -I/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino -I /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/mega -I /Users/chris.a.graham/Documents/Arduino/libraries/FreeRTOS/src  -o variantHooks.o
+#avr-g++ -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -Wno-error=narrowing -MMD -flto -mmcu=atmega2560 -DF_CPU=16000000L -DARDUINO=10819 -DARDUINO_AVR_MEGA2560 -DARDUINO_ARCH_AVR -I/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino -I/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/mega -I/Users/chris.a.graham/Documents/Arduino/libraries/FreeRTOS/freertos ./deps/freertos/variantHooks.cpp -o variantHooks.o
+# make .elf file from .o file
+#"$compiler" $compiler_options "$base_name".o tasks.o variantHooks.o timers.o stream_buffer.o queue.o port.o heap_3.o event_groups.o -o "$base_name".elf
+avr-gcc -w -Os -g -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega2560 -o "$base_name".elf blink.o event_groups.o heap_3.o list.o port.o queue.o stream_buffer.o tasks.o timers.o variantHooks.o
+# make .hex (intel hex format) file from .elf file
+avr-objcopy -j .text -j .data -O ihex "$base_name".elf "$base_name".hex
+
+# burn (write) the program into the Arduino from .hex file
+#avrdude -v -p atmega2560 -c wiring -b 115200 -B 10 -D -P "$port" \
+#  -F -Uflash:w:"$base_name".hex:i
+avrdude -v -p m2560 -c stk500v2 -b 115200 -D -P "$port" \
+  -F -Uflash:w:"$base_name".hex:i

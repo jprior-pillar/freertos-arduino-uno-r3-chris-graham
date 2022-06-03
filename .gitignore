@@ -1,0 +1,8 @@
+# vim swap files
+.*.swp
+/*.d
+/*.eep
+/*.o
+/*.a
+/deps/arduino_cache/*.o
+/deps/arduino_cache/*.d
